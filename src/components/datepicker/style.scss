@@ -1,0 +1,159 @@
+$color: red;
+$header-height: 40px;
+$main-line-height: 1.42856;
+$font-family: Helvetica Neue, Arial, sans-serif;
+$font-size: 11.5px;
+$body-bg: rgba(255,255,255,0.7);
+$hover-bg: rgba(155,155,155,0.5);
+$active-bg: $hover-bg;
+$disable-bg: rgba(255, 255, 255,0.6);
+$disable-color: $hover-bg;
+$main-color: #1caf9a;
+
+*, *:after, *:before{
+  box-sizing: border-box;
+}
+
+%hover{
+  background-color: $hover-bg;
+}
+%active{
+  background-color: $active-bg;
+}
+
+date-picker, .date-picker, [date-picker]{
+  float: left;
+  position: relative;
+  font-family: $font-family;
+
+  .disabled{
+    background-color: $disable-bg;
+    color: $disable-color;
+    pointer-events: none;
+  }
+
+  @at-root .calender{
+    margin:auto;
+    width: 101%;
+    position: absolute;
+    z-index: 99;
+    display: none;
+    min-width: 220px;
+    border: 1px solid #dedbdb;
+    border-radius: 3px;
+    background-color: $body-bg;
+    .open &{
+      display: block;
+    }
+
+    @at-root &-#{header}{
+      line-height: $header-height;
+      text-align: center;
+      position: relative;
+      background-color: $main-color;
+      float: left;
+      width: 100%;
+      font-size: $font-size;
+      .disabled{
+        background-color: rgba(255,255,255,0.4);
+      }
+      &-#{left}{
+        display: inline-block;
+        width: 15%;
+        float: left;
+        cursor: pointer;
+        &:hover{
+          background-color: rgba(255,255,255,0.2);
+        }
+      }
+      &-#{middle}{
+        display: inline-block;
+        width: 70%;
+        float: left;
+        cursor: pointer;
+        &:hover{
+          background-color: rgba(255,255,255,0.2);
+        }
+      }
+      &-#{right}{
+        display: inline-block;
+        width: 15%;
+        float: left;
+        cursor: pointer;
+        &:hover{
+          background-color: rgba(255,255,255,0.2);
+        }
+      }
+      &:after{
+        content: '';
+        display: block;
+        clear: both;
+      }
+    }
+
+    @at-root &-#{day-header}{
+      float: left;
+      width: 100%;
+      background-color: lighten(#1caf9a, 30%);
+      text-align: center;
+      .day{
+        width: 100% * 1/7;
+        float: left;
+        font-size: $font-size;
+        padding: 10px 0;
+      }
+    }
+
+    @at-root &-#{body}{
+      float: left;
+      width: 100%;
+      position: relative;
+      text-align: center;
+      &>*{
+        float: left;
+      }
+
+      .calender-date{
+        margin:5px 1%;
+        padding: 4px 6px;
+        width: 100% * 1/7 - 2%;
+        line-height: $main-line-height;
+        font-size: $font-size;
+        cursor: pointer;
+        &.preNextMonth{
+          background-color: $disable-bg;
+          color: $disable-color;
+          pointer-events: none;
+        }
+        &:hover{
+          @extend %hover
+        }
+        &.active{
+          @extend %active
+        }
+      }
+      .calender-month, .calender-year{
+        margin: 5px 1%;
+        padding: 6px 10px;
+        width: 100% * 1/4 - 2%;
+        line-height: $main-line-height;
+        cursor: pointer;
+        font-size: $font-size;
+        &:hover{
+          @extend %hover
+        }
+        &.active{
+          @extend %active
+        }
+      }
+    }
+  }
+
+}
+
+
+input{
+  border: 1px solid $color;
+  padding: 6px;
+  width: 300px;
+}
