@@ -1,0 +1,9 @@
+<div id="date-picker-switch" ><div class="calender-day-header">
+    <span class="day" ng-repeat="day in days">{{day}}</span>
+</div><div class="calender-body"><span class="calender-date preNextMonth" ng-repeat="date in prevDates">
+            {{date}}</span>
+    <span class="calender-date" ng-repeat="date in dates"
+          ng-class="{'active':dateTime.date===date&&dateTime.month===dateTimeView.month&&dateTime.year===dateTimeView.year,'disabled':isOverMinDate(date)||isOverMaxDay(date)}"
+          ng-click="setDate(date)">{{date}}</span>
+    <span class="calender-date preNextMonth" ng-repeat="date in nextDates">{{date}}</span>
+</div></div>

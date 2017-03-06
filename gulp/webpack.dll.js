@@ -1,17 +1,17 @@
-var path = require("path");
-var webpack = require("webpack");
-var Setting = require("./directory");
+const path = require("path");
+const webpack = require("webpack");
+const Setting = require("./directory");
 
-var getAlias = function(){
+function getAlias(){
     return {
         "jquery": path.resolve(Setting.nodeModules, "jquery/dist/jquery.min.js"),
         "angular": path.resolve(Setting.nodeModules, "angular/angular.min.js")
     }
-};
+}
 
 module.exports = {
     resolve:{
-        alias:getAlias()
+        alias: getAlias()
     },
     entry: {
         vendor:['jquery','angular']
@@ -26,6 +26,11 @@ module.exports = {
             path: 'manifest.json',
             name: 'vendor',
             context: Setting.root
-        })
+        }),
+        // new webpack.optimize.UglifyJsPlugin({
+        //     compress: {
+        //         warnings: false
+        //     }
+        // })
     ]
 };

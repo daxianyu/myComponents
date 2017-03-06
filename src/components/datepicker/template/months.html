@@ -1,0 +1,7 @@
+<div id="date-picker-switch">
+    <div class="calender-body">
+    <span class="calender-month" ng-repeat="month in months"
+          ng-class="{'active': dateTime.month===$index+1&&dateTime.year===dateTimeView.year, 'disabled':isOverMaxMonth($index+1)||isOverMinMonth($index+1)}"
+          ng-click="setMonth($index+1)">{{month}}</span>
+    </div>
+</div>

@@ -1,0 +1,7 @@
+<div id="date-picker-switch">
+    <div class="calender-body">
+        <span class="calender-year"
+              ng-repeat="year in years" ng-class="{'active':dateTime.year===year,'disabled':year>maxYear||year<minYear}"
+              ng-click="setYear(year)">{{year}}</span>
+    </div>
+</div>

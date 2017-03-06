@@ -6,10 +6,10 @@
 </head>
 <body>
 <div ng-controller="datePickerCtl">
-    <div date-picker init-date="startTime" date-max-limit="2017-01-04" date-min-limit="2015-07-07">
+    <div datepicker init-date="startTime" date-max-limit="endTime">
         <input type="text" ng-model="startTime" >
     </div>
-    <div date-picker init-date="endTime">
+    <div datepicker init-date="endTime" date-min-limit="startTime">
         <input type="text" ng-model="endTime">
     </div>
     <span ng-click="changeTime('2016-03-09')">点我</span>

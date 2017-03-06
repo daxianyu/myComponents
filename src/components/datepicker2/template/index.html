@@ -1,0 +1,8 @@
+<div ng-model="a" class="calender">
+    <div class="calender-header">
+        <span class="calender-header-left" ng-class="{'disabled': overMin}" ng-click="prev()">上一页</span>
+        <span class="calender-header-middle" ng-click="upSelect()">{{selectedView}}</span>
+        <span class="calender-header-right" ng-class="{'disabled': overMax}" ng-click="next()">下一页</span>
+    </div>
+    <div id="date-picker-switch"></div>
+</div>
