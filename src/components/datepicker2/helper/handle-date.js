@@ -2,8 +2,8 @@
  * Created by tangjianfeng on 2017/3/6.
  */
 
-const timeZone = new Date().getTimezoneOffset() / 60,
-    leftPad = require('../utils').leftPad,
+const timeZoneOffset = new Date().getTimezoneOffset() * 60 * 1000,
+    leftPad = require('../../utils').leftPad,
     millSecOfDay = 24 * 3600 * 1000;
 
 function getDates (endDayOfMonth) {
@@ -45,10 +45,12 @@ function getNextDates (endDayOfMonth) {
 function defineGap (thisDate) {
     const year = thisDate.year,
         month = thisDate.month;
-    let startDayOfMonth = new Date(`${year}-${leftPad(month, 2)}-01`),
-        startDayOfNextMonth = month === 12 ? new Date(`${year + 1}-01-01`) : new Date(`${year}-${leftPad(month + 1, 2)}-01`),
-        endDayOfPrevMonth = new Date(startDayOfMonth.getTime() - millSecOfDay),
-        endDayOfMonth = new Date(startDayOfNextMonth.getTime() - millSecOfDay);
+    let startDayOfMonth = new Date(new Date(`${year}-${leftPad(month, 2)}-01`).valueOf() + timeZoneOffset),
+        startDayOfNextMonth = month === 12
+            ? new Date(new Date(`${year + 1}-01-01`).valueOf() + timeZoneOffset)
+            : new Date(new Date(`${year}-${leftPad(month + 1, 2)}-01`).valueOf() + timeZoneOffset),
+        endDayOfPrevMonth = new Date(startDayOfMonth - millSecOfDay),
+        endDayOfMonth = new Date(startDayOfNextMonth - millSecOfDay);
     return {
         startDayOfMonth,
         startDayOfNextMonth,
@@ -72,4 +74,5 @@ function getDateViewArr (thisDate) {
 
 module.exports = {
     getDateViewArr,
+    timeZoneOffset
 };

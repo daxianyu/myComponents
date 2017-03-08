@@ -6,12 +6,14 @@ let maxYear, maxMonth, maxDate, maxLimitDate;
 function init ($scope, maxLimit) {
     if (maxLimit) {
         maxLimitDate = maxLimit;
-        maxYear = maxLimitDate.getFullYear();
-        maxMonth = maxLimitDate.getMonth() + 1;
-        maxDate = maxLimitDate.getDate();
-        $scope.maxYear = maxYear;
-        $scope.maxMonth = maxMonth;
-        $scope.maxDate = maxDate;
+        $scope.maxYear = maxYear = maxLimitDate.getFullYear();
+        $scope.maxMonth = maxMonth = maxLimitDate.getMonth() + 1;
+        $scope.maxDate = maxDate = maxLimitDate.getDate();
+    } else {    //  需重置，否则数据会因闭包封存起来导致错误
+        maxLimitDate = {};
+        $scope.maxYear = maxYear = void 0;
+        $scope.maxMonth = maxMonth = void 0;
+        $scope.maxDate = maxDate = void 0;
     }
 }
 

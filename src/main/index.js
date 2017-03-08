@@ -27,6 +27,6 @@ comp.controller('datePickerCtl', ['$scope', '$filter', function ($scope, $filter
     };
     $scope.changeTime('2001-01-11');
     $scope.startTime = '2016-07-07';
-    $scope.endTime = '2017-01-07';
+    // $scope.endTime = '2017-01-07';
 
 }]);

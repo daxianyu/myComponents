@@ -12,7 +12,8 @@ import './style.scss';
     const dateViewIndex = 0,
         monthViewIndex = 1,
         yearViewIndex = 2,
-        dateUtil = require('./date-util'),
+        dateUtil = require('./helper/date-util'),
+        calDateTime = require('./helper/handle-date'),
         getDateTime = dateUtil.getDateTime,
         isValidDate = dateUtil.isValidDate;
 
@@ -24,12 +25,13 @@ import './style.scss';
     function datePickerDirective ($window, $compile, $filter, $locale, $timeout) {
         // 记录两个日期：一个是上次改后的日期，一个是记录浏览过程中的当前页日期信息
         // 作水平切换时，只有上次改后的日期所在的年、月、日才作active显示
-
         function linkingFunction ($scope, elm, attr) {
+            const isOverMax = require('./limit/overMax'),
+                isOverMin = require('./limit/overMin');
             let thisInput = angular.element(elm[0].children[0]),
                 $theCalender = angular.element(elm),
                 theCalender = $theCalender[0],
-
+                // calendar html view
                 mainView = $compile(mainViewHtml)($scope),
                 dateView = $compile(dateViewHtml)($scope),
                 monthView = $compile(monthViewHtml)($scope),
@@ -39,14 +41,12 @@ import './style.scss';
                 dateFormats = $locale.DATETIME_FORMATS,
                 maxLimitDate = $scope.dateMaxLimit ? new Date($scope.dateMaxLimit) : null,
                 minLimitDate = $scope.dateMinLimit ? new Date($scope.dateMinLimit) : new Date(0),  // 如果没有设定最小，则为1970年
-                isOverMax = require('./limit/overMax'),
-                isOverMin = require('./limit/overMin'),
                 changeView,
                 isMouseOnInput = false,
                 isMouseOn = false;
 
             $scope.dateTime = {};           // 上次改后的日期
-            $scope.glanceView = {};         // 记录浏览过程中的当前页日期信息
+            $scope.glanceView = {};         // 浏览过程中的当前页日期信息
 
             $scope.open = false;
             $scope.days = dateFormats.SHORTDAY;
@@ -67,8 +67,10 @@ import './style.scss';
                 minLimitDate = $scope.dateMinLimit ? new Date($scope.dateMinLimit) : new Date(0);
             }
 
-            function resetDateTime () {
-                let initTime = isValidDate($scope.initDate) ? new Date($scope.initDate) : nowTime;
+            function resetDateTime () {                 // 初始化重置日期或当手工修改input时重置
+                let initTime = isValidDate($scope.initDate)
+                    ? new Date(new Date($scope.initDate).valueOf() + calDateTime.timeZoneOffset)
+                    : nowTime;
                 $scope.dateTime = {
                     date: initTime.getDate(),
                     month: $scope.glanceView.month = initTime.getMonth() + 1,
@@ -76,9 +78,9 @@ import './style.scss';
                 };
             }
 
-            function showCalender () {
+            function showCalender () {                  // 点击弹出选择器时触发，一系列重置
                 theCalender.classList.add('open');
-                resetLimit();   // 因为如果start-date和end-date联动相互制约，则需要每次都init
+                resetLimit();                           // 因为如果start-date和end-date联动相互制约，则需要每次都init
                 isOverMax.init($scope, maxLimitDate);
                 isOverMin.init($scope, minLimitDate);
                 $scope.glanceView.year = $scope.dateTime.year;
@@ -91,10 +93,10 @@ import './style.scss';
                 theCalender.classList.remove('open');
             }
 
+            // 封装选择器视图操作
             changeView = (function changeView2 () {
-                let calDateTime = require('./handle-date'),
-                    $preHeader = angular.element(mainView[0].querySelector('.calender-header')),
-                    index = 0,
+                let $preHeader = angular.element(mainView[0].querySelector('.calender-header')),
+                    viewIndex = 0,
                     dateViewObj = {
                         name: 'date',
                         DOM: dateView,
@@ -191,30 +193,30 @@ import './style.scss';
                 function switchView () {
                     let preBody = mainView[0].querySelector('#date-picker-switch');
                     preBody.remove();
-                    $preHeader.after(views[index].DOM);
-                    views[index].replaceView();
+                    $preHeader.after(views[viewIndex].DOM);
+                    views[viewIndex].replaceView();
                 }
                 function upward () {
-                    if (index < views.length - 1) {
-                        index++;
+                    if (viewIndex < views.length - 1) {
+                        viewIndex++;
                         switchView();
                     }
                 }
                 function downward () {
-                    if (index > 0) {
-                        index--;
+                    if (viewIndex > 0) {
+                        viewIndex--;
                         switchView();
                     }
                 }
                 function prev () {
-                    views[index].prev();
+                    views[viewIndex].prev();
                 }
                 function next () {
-                    views[index].next();
+                    views[viewIndex].next();
                 }
-                function set (viewIndex) {
-                    if (viewIndex >= dateViewIndex && viewIndex < views.length) {
-                        index = viewIndex;
+                function set (index) {
+                    if (index >= dateViewIndex && index < views.length) {
+                        viewIndex = index;
                         switchView();
                     }
                 }
@@ -229,15 +231,9 @@ import './style.scss';
             })();
 
             // 按钮操作：向上一级选择、水平向前选择、水平向后选择、选择年、月、日
-            $scope.upSelect = function () {         // 不可直接 $scope.upSelect = changeView.upward ！！
-                changeView.upward();
-            };
-            $scope.prev = function () {
-                changeView.prev();
-            };
-            $scope.next = function () {
-                changeView.next();
-            };
+            $scope.upSelect = changeView.upward;
+            $scope.prev = changeView.prev;
+            $scope.next = changeView.next;
             $scope.setYear = function (year) {
                 $scope.glanceView.year = year;
                 changeView.downward();
@@ -273,6 +269,11 @@ import './style.scss';
                     });
                 }
             });
+            thisInput.on('keydown', function (event) {
+                if (event.keyCode===9||event.keyCode===13) {
+                    hideCalender();
+                }
+            });
             thisInput.on('blur focusout', function blur () {
                 isMouseOnInput = false;
             });
@@ -303,8 +304,6 @@ import './style.scss';
                 initDate: '=',
                 dateMaxLimit: '=',
                 dateMinLimit: '=',
-                startDate: '=',
-                endDate: '=',
             },
             link: linkingFunction,
         };
