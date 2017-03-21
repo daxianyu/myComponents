@@ -7,7 +7,8 @@ $hover-bg: rgba(155,155,155,0.5);
 $active-bg: $hover-bg;
 $disable-bg: rgba(255, 255, 255,0.6);
 $disable-color: $hover-bg;
-$main-color: #1caf9a;
+//$main-color: #1caf9a;
+$main-color: #bbbdc3;
 
 *, *:after, *:before{
   box-sizing: border-box;
@@ -20,11 +21,22 @@ $main-color: #1caf9a;
   background-color: $active-bg;
 }
 
+.date-addon {
+  text-align: center;
+  float: left;
+  width: 30px;
+  padding-top: 7px;
+}
+
 datepicker, .datepicker, [datepicker]{
   float: left;
   position: relative;
   font-family: $font-family;
-  width: 100%;
+  width: #{calc(50% - 15px)};
+
+  input {
+    width: 100%;
+  }
 
   .disabled{
     background-color: $disable-bg;
@@ -38,7 +50,7 @@ datepicker, .datepicker, [datepicker]{
     position: absolute;
     z-index: 99;
     display: none;
-    min-width: 220px;
+    min-width: 250px;
     max-width: 400px;
     border: 1px solid #dedbdb;
     border-radius: 3px;
@@ -95,7 +107,7 @@ datepicker, .datepicker, [datepicker]{
     @at-root &-#{day-header}{
       float: left;
       width: 100%;
-      background-color: lighten(#1caf9a, 30%);
+      background-color: lighten($main-color, 30%);
       text-align: center;
       .day{
         width: 100% * 1/7;

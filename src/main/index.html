@@ -6,10 +6,11 @@
 </head>
 <body>
 <div ng-controller="datePickerCtl">
-    <div datepicker init-date="startTime" date-max-limit="endTime">
+    <div datepicker class="date-left" init-date="startTime" date-max-limit="endTime">
         <input type="text" ng-model="startTime" >
     </div>
-    <div datepicker init-date="endTime" date-min-limit="startTime">
+    <span class="date-addon">至</span>
+    <div datepicker class="date-right" init-date="endTime" date-min-limit="startTime">
         <input type="text" ng-model="endTime">
     </div>
     <span ng-click="changeTime('2016-03-09')">点我</span>

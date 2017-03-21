@@ -3,6 +3,12 @@
  */
 /* global require, navigator */
 
+/*
+* timeZoneOffset拿来补偿
+* 因时区的原因导致的在new Date('2017-01-01')时，
+* 与格林尼治时间的差
+* */
+
 let angular = window.angular,
     prefix = require('../../config').prefix;
 import './style.scss';
@@ -270,7 +276,7 @@ import './style.scss';
                 }
             });
             thisInput.on('keydown', function (event) {
-                if (event.keyCode===9||event.keyCode===13) {
+                if (event.keyCode === 9 || event.keyCode === 13) {
                     hideCalender();
                 }
             });

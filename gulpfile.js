@@ -44,6 +44,15 @@ gulp.task('webpack', function (done) {
     });
 });
 
+gulp.task('com', function (done) {
+    webpack(require('./gulp/webpack.com'), (err, stats)=>{
+        if (err) {
+            console.log(err);
+        }
+        done();
+    });
+})
+
 gulp.task('ws', function (done) {                        /** 使用webpack stream进行打包,但是貌似没什么效果 */
     return webpackStream(webpackConfig);
 });
