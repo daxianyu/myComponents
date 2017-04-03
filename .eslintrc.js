@@ -4,9 +4,21 @@ module.exports = {
     // extends: 'airbnb',
     // add your custom rules here
     globals: {
-        node: true
+        console: false,
+        require: false,
+        process: false,
+        module: false,
+        exports: false,
+        Promise: false,
+        async: false,
+        window: false,
+        new: false,
+        setTimeout: false,
+        await: false,
+        JSON: false,
+        Symbol: false
     },
-    'rules': {
+    rules: {
         // 禁止条件表达式中出现赋值操作符
         "no-cond-assign": 2,
         // 禁用 console
@@ -15,7 +27,7 @@ module.exports = {
         // if (false) {
         //     doSomethingUnfinished();
         // } //cuowu
-        "no-constant-condition": 2,
+        // "no-constant-condition": 2,
         // 禁止在正则表达式中使用控制字符 ：new RegExp("\x1f")
         "no-control-regex": 2,
         // 数组和对象键值对最后一个逗号， never参数：不能带末尾的逗号, always参数：必须带末尾的逗号，
@@ -238,7 +250,7 @@ module.exports = {
         // 禁止将 undefined 作为标识符
         "no-undefined": 0,
         // 禁止出现未使用过的变量
-        "no-unused-vars": [2, { "vars": "all", "args": "none" }],
+        // "no-unused-vars": [2, { "vars": "all", "args": "none" }],
         // 不允许在变量定义之前使用它们
         "no-use-before-define": 0,
         //////////////////////////
@@ -402,7 +414,7 @@ module.exports = {
         // 强制在块之前使用一致的空格
         "space-before-blocks": [2, "always"],
         // 强制在 function的左括号之前使用一致的空格
-        "space-before-function-paren": [2, "always"],
+        // "space-before-function-paren": [2, "always"],
         // 强制在圆括号内使用一致的空格
         "space-in-parens": [2, "never"],
         // 要求操作符周围有空格
@@ -426,7 +438,7 @@ module.exports = {
         // 强制在子类构造函数中用super()调用父类构造函数，TypeScrip的编译器也会提示
         "constructor-super": 0,
         // 强制 generator 函数中 * 号周围使用一致的空格
-        "generator-star-spacing": [2, { "before": true, "after": true }],
+        "generator-star-spacing": [2, { "before": true, "after": false }],
         // 禁止修改类声明的变量
         "no-class-assign":2,
         // 不允许箭头功能，在那里他们可以混淆的比较

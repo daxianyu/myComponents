@@ -1,37 +1,47 @@
-/* global require */
+/* globals require, rm, cp, mkdir, process, JSON */
 require('shelljs/global'); // 引入shell命令
-let gulp = require('gulp');
-let glob = require('glob');
-let path = require('path');
-let webpack = require('webpack');
-let webpackStream = require('webpack-stream');
-let webpackDllConfig = require('./gulp/webpack.dll.js');
-let Setting = require('./gulp/directory');
-let connect = require('gulp-connect');
-let WebpackDevServer = require('webpack-dev-server');
-let gutil = require('gutil');
 
-let webpackConfig = require('./gulp/webpack.config')();
+const gulp = require('gulp'),
+    fs = require('fs'),
+    webpack = require('webpack'),
+    merge = require('webpack-merge'),
+    gulpRev = require('gulp-rev'),
+    Setting = require('./gulp/directory'),
+    connect = require('gulp-connect'),
+    gutil = require('gutil'),
+    rsync = require('gulp-rsync'),
+    rawScript = [
+        {jquery: Setting.nodeModules + '/jquery/dist/jquery.min.js'},
+        {angular: Setting.nodeModules + '/angular/angular.min.js'},
+    ],
+    // rawScript = [
+    //     {jquery: Setting.nodeModules + '/jquery/dist/jquery.min.js'},
+    //     {angular: Setting.nodeModules + '/angular/angular.min.js'},
+    // ],
+    externals = {
+        jquery: 'window.jquery',
+        angular: 'window.angular',
+    };
 
-
-/** 首先运行gulp b 运行第三方库文件打包以及项目构建
- *  如果第三方库没有变动,则直接运行gulp项目构建
- *  也可运行gulp dll 只对第三方库进行打包
- *  */
-
-
-gulp.task('dll', function (done) {
-    webpack(webpackDllConfig, function () {
-        done();
-    });
-});
-
-gulp.task('webpack', function (done) {
-    /** 使用原生 webpack 打包*/
-    rm('-rf', Setting.statics);
+gulp.task('webpack', function (done) {                   // 使用原生 webpack 打包
+    let fileReg = /\/([^\/]+)$/,
+        revMani = JSON.parse(fs.readFileSync(Setting.root + '/rev.json')),
+        processedScript = [],
+        webpackConfig;
+    for (let script of rawScript) {
+        let key = Object.keys(script)[0],
+            value = script[key];
+        if (value) {
+            processedScript.push('/statics/' + revMani[value.match(fileReg)[1]]);
+        }
+    }
     done();
-    webpack(webpackConfig, function (err, stats) {
-        cp('-r', './statics/js/', Setting.statics);
+    webpackConfig = require('./gulp/webpack.config');
+    webpack(merge(webpackConfig, {
+        watch: process.env.NODE_ENV === 'develop',
+        externals: externals,
+        htmlTag: processedScript,
+    }), function (err, stats) {
         if (err) throw new gutil.PluginError('webpack', err);
         gutil.log('[webpack]', stats.toString({
             colors: true,
@@ -44,38 +54,68 @@ gulp.task('webpack', function (done) {
     });
 });
 
-gulp.task('com', function (done) {
-    webpack(require('./gulp/webpack.com'), (err, stats)=>{
-        if (err) {
-            console.log(err);
-        }
-        done();
-    });
-})
-
-gulp.task('ws', function (done) {                        /** 使用webpack stream进行打包,但是貌似没什么效果 */
-    return webpackStream(webpackConfig);
+gulp.task('copy', function (done) {
+    rm('-rf', Setting.dest + '/*');
+    mkdir('dist/modules');
+    mkdir('dist/statics');
+    return gulp.src(rawScript.map((item) =>{
+        return item[Object.keys(item)[0]];
+    }))
+        .pipe(gulpRev())
+        .pipe(gulp.dest(Setting.statics))
+        .pipe(gulpRev.manifest('rev.json'))
+        .pipe((() => {
+            done();
+            return gulp.dest(Setting.root);
+        })());
 });
 
-gulp.task('server', function (done) {
-    /** 纯server服务  */
+
+gulp.task('server', function (done) {                    // 纯server服务
     done();
     return connect.server({
-        port: 8887,
+        port: 8888,
         root: './dist',
-    })
-});
-
-gulp.task('webpack-dev-server', function (done) {
-    /** 开发加服务器加监听 */
-    new WebpackDevServer(webpack(webpackConfig), {}).listen(8889, 'localhost', function (err) {
-        if (err) throw new gutil.PluginError('webpack-dev-server', err);
-        // Server listening
-        gutil.log('[webpack-dev-server]', 'http://localhost:8080/webpack-dev-server/index.html');
     });
 });
 
+gulp.task('develop', function (done) {
+    process.env.NODE_ENV = 'develop';
+    done();
+});
+gulp.task('test', function (done) {
+    process.env.NODE_ENV = 'develop';
+    done();
+});
+gulp.task('production', function (done) {
+    process.env.NODE_ENV = 'product';
+    done();
+});
 
-gulp.task('b', gulp.series('dll', 'webpack', 'server'));
-gulp.task('bs', gulp.series('dll', 'server', 'ws'));
-gulp.task('default', gulp.series('webpack'));
+gulp.task('deploy', function () {   // 发布用
+    return gulp.src('dist/**')
+        .pipe(rsync({
+            root: 'dist/',
+            hostname: 'daxianyu.cn',
+            destination: '/data/dxy-widget/',
+            username: 'root',
+            archive: true,
+            silent: false,
+            compress: true,
+            recursive: true,
+            port: '22',
+            clean: true,
+            options: {
+                backup: true,
+                update: true,
+                'backup-dir': '/root/source/backup/backup_$(date +\%y-\%m-\%d)',
+            },
+        }));
+});
+gulp.task('backup', function () {
+    return gulp.src();
+});
+
+gulp.task('build', gulp.series('copy', 'server', 'webpack'));        // 推荐用这个作为起始构建
+gulp.task('default', gulp.series('develop', 'server', 'webpack'));                 // 第二次构建则直接用gulp即可
+gulp.task('prod', gulp.series('production', 'copy', 'webpack'));

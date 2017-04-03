@@ -1,88 +1,109 @@
 /**
  * Created by tangjianfeng on 2016/10/23.
  */
-/*global require, module */
-const _ = require('lodash');
-const path = require('path');
-const webpack = require('webpack');
-const glob = require('glob');
-// var entries = getEntry('./src/pages/**/index.js');
-const entries = getEntry('./src/main/index.js');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-const Setting = require('./directory');
+const _ = require('lodash'),
+    Setting = require('./directory'),
+    path = require('path'),
+    webpack = require('webpack'),
+    glob = require('glob'),
+    entries = require('./utils').entries,
+    ExtractTextPlugin = require('extract-text-webpack-plugin'),
+    ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin'),
+    HtmlWebpackPlugin = require('html-webpack-plugin'),
+    WebpackMd5Hash = require('webpack-md5-hash');
 
+function isProd() {
+    return process.env.NODE_ENV === 'product';
+}
 
 function getEntry (globpath) {
-    let entries = {};
-    let pathname;
+    let entries = {}, pathname,
+        extra = ['demo', 'test'];
     glob.sync(globpath).forEach(function (entry) {
-        // basename = path.basename(entry, path.extname(entry));
-        pathname = entry.split('/').splice(-2, 1);
+        if (isProd()) {
+            for (let item of extra) {
+                if (entry.indexOf(item) > -1) {
+                    return;
+                }
+            }
+        }
+        let conDir = entry.replace(Setting.root, '').replace('./src/pages/', ''),
+            dirArr = conDir.split('/');
+        dirArr.pop();
+        pathname = dirArr.join('/');
         entries[pathname] = entry;
     });
     return entries;
 }
 
-
 function getLoaders () {
     return [{
-        test: /\.ts$/,
-        // loader: ExtractTextPlugin.extract('ts')
-        // loader: ExtractTextPlugin.extract('awesome-typescript-loader')
-        loaders: ['awesome-typescript-loader']
-    }, {
         test: /\.css$/,
-        loader: ExtractTextPlugin.extract('style', 'css')
-    }, {
-        test: /\.(html|htm)$/,
-        loader: 'html',
+        loader: ExtractTextPlugin.extract('style', 'css', 'postcss'),
     }, {
         test: /\.scss$/,
-        loader: ExtractTextPlugin.extract('style', 'css!sass')
+        loader: ExtractTextPlugin.extract('style', 'css!sass', 'postcss'),
+    }, {
+        test: /\.(html|htm)$/,
+        exclude: /pages.+?index/,
+        loader: 'html',
+    }, {
+        test: /\.(png|jpe?g|ico)$/,
+        loader: 'url',
+        query: {
+            limit: 8196,
+            name: 'statics/images/[name]_[hash:6].[ext]',
+        },
     }, {
         test: /\.js$/,
         exclude: /node_modules/,
-        loaders: ['babel?presets[]=es2015'],
-        // query: {
-        //     presets: ['es2015']
-        // },
-        // loader: ExtractTextPlugin.extract('babel?presets[]=es2015')
+        loader: 'babel',
+        query: {
+            presets: ['es2015', 'stage-0'],
+        },
     }];
 }
 
 function getPlugin () {
     let defaultPlugin = [
-            new webpack.ProvidePlugin({
-                '$': 'jquery',
-                'jquery': 'jquery',
-                'jQuery': 'jquery',
+            new webpack.DefinePlugin({
+                'process.env': {
+                    'NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+                },
             }),
-            new webpack.optimize.CommonsChunkPlugin({
-                name: 'common',
-                filename: 'js/common.js',
-                minChunks: 2,
+            // new webpack.optimize.CommonsChunkPlugin({
+            //     name: 'common',
+            //     filename: 'statics/js/common_[chunkhash:6].js',
+            //     minChunks: 2,
+            // }),
+            new ScriptExtHtmlWebpackPlugin({
+                defaultAttribute: 'defer',
             }),
-            new ExtractTextPlugin('/css/out.[name].css'),
-            new webpack.DllReferencePlugin({
-                context: Setting.root,
-                manifest: require(Setting.root + '/manifest.json'),
-                name: 'vendor',
-            }),
-            // new webpack.optimize.UglifyJsPlugin({
-            //     compress: {
-            //         warnings: false
-            //     }
-            // })
+            new ExtractTextPlugin('statics/css/[name]_[contenthash:6].css'),
+            new WebpackMd5Hash(),
         ],
-        pages = getEntry('./src/main/index.html');
+        pages = getEntry('./src/pages/**/index.html');
+
+    if (isProd()) {
+        defaultPlugin.push(
+            new webpack.optimize.UglifyJsPlugin({
+                compress: {
+                    warnings: false,
+                },
+                mangle: false
+            })
+        );
+    }
+
     _.each(pages, function (value, key, object) {
         let conf = {
             template: path.resolve(Setting.root, value),
-            filename: path.resolve(Setting.modules, key) + '.html',
+            filename: isProd()
+                ?`${key}.html`
+                :`modules/${key}.html`,
             inject: 'body',
-            chunks: [key, 'common'],
+            chunks: [key],
             excludeChunks: [],
         };
         defaultPlugin.push(new HtmlWebpackPlugin(conf));
@@ -90,53 +111,44 @@ function getPlugin () {
     return _.union(defaultPlugin, []);
 }
 
-function getPostCss () {
-    return '';
-}
-
-module.exports = function () {
-    return {
-        // context: __dirname,
-        entry: entries, // webpack在二级目录下,说明调用的时候是以gulpfile所在目录为基准
-        watch: true,
-        cache: true,
-        profile: true,
-        output: {
-            path: Setting.statics,
-            filename: 'js/[name].js',    // 不能'/'打头，分隔符写到path中
-        },
-        // devtool: 'eval',
-        module: {
-            // preLoaders: [
-            //     {
-            //         test: /\.js$/,
-            //         loader: 'eslint',
-            //         include: Setting.root,
-            //         exclude: /node_modules/,
-            //     },
-            // ],
-            loaders: getLoaders(),
-        },
-        externals: {
-            jquery: true,
-            ng: true,
-        },
-        eslint: {
-            configFile: Setting.root + '/.eslintrc.js', // 指定eslint的配置文件在哪里
-            failOnWarning: false, // eslint报warning了就终止webpack编译
-            failOnError: true, // eslint报error了就终止webpack编译
-            cache: true, // 开启eslint的cache，cache存在node_modules/.cache目录里
-        },
-        resolve: {
-            alias: {
-                'jquery': path.resolve(Setting.nodeModules, 'jquery/dist/jquery.min.js'),
-                'angular': path.resolve(Setting.nodeModules, 'angular/angular.min.js'),
-            },
-            extensions: ['', '.ts', '.js'],
-        },
-        plugins: getPlugin(),
-        postcss: getPostCss(),
-    };
-}
-
-
+module.exports = {
+    // context: __dirname,
+    entry: entries,
+    watch: true,
+    cache: true,
+    profile: true,
+    output: {
+        path: Setting.dest,
+        publicPath: '/',                                // 即以path为基
+        filename: 'statics/js/[name]_[chunkhash:6].js',      // 不能'/'打头，分隔符写到path中
+        // chunkFilename: 'statics/js/chunk_[name].js',
+    },
+    // devtool: 'eval',
+    module: {
+        // preLoaders: [
+        //     {
+        //         test: /\.js$/,
+        //         loader: 'eslint',
+        //         include: Setting.root,
+        //         exclude: /node_modules/,
+        //     },
+        // ],
+        loaders: getLoaders(),
+    },
+    eslint: {
+        configFile: Setting.root + '/.eslintrc.js', // 指定eslint的配置文件
+        failOnWarning: true,                       // 报warning终止webpack
+        failOnError: true,                          // 报error终止
+        cache: true,                                // 开启eslint的cache，cache存在node_modules/.cache目录里
+    },
+    resolve: {
+        root: [
+            Setting.root,
+        ],
+        extensions: ['', '.ts', '.js'],
+    },
+    plugins: getPlugin(),
+    htmlLoader: {
+        root: Setting.root,
+    },
+};
