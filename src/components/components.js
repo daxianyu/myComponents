@@ -3,6 +3,7 @@
  */
 /* globals require, module */
 require('./datepicker/index');
+require('./pagination/index')
 
 module.exports = {
     components: ['datepicker'],

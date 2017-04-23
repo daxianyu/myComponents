@@ -1,0 +1,46 @@
+$border: 1px solid #DBDFE6;
+$mainColor: #ff8700;
+
+ul.paginationX {
+  padding: 0;
+  margin: 0;
+  text-align: center;
+  padding-bottom: 20px;
+  .page-border{
+    border: $border;
+    border-radius: 2px;
+  }
+}
+ul.paginationX > li{
+  display: inline-block;
+  list-style: none;
+  padding: 3px 0 5px 0;
+  margin: 0 5px;
+  color: #475669;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  &.page-btn{
+    width: 30px;
+    text-align: center;
+  }
+  &.active{
+    background-color: $mainColor;
+    color: white;
+    border: 1px solid $mainColor;
+    &:hover, &:active{
+      background-color: $mainColor !important;
+    }
+  }
+  &.page-border{
+    cursor: pointer;
+    &:hover{
+      background-color: #ddd;
+    }
+    &:active{
+      background-color: #ccc;
+    }
+  }
+}
+

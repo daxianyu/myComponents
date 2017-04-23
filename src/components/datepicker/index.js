@@ -7,6 +7,10 @@
 * timeZoneOffset拿来补偿
 * 因时区的原因导致的在new Date('2017-01-01')时，
 * 与格林尼治时间的差
+* new Date('2017-01-01')是格林尼治的0点0分0秒，在我们所在地区则是8点钟
+* new Date('2017-01-01').getHours() === 8
+* 我要把时间轴拉回到，startDate.getHours() === 0
+* 古老的东方最先迎来新年....
 * */
 
 let angular = window.angular,

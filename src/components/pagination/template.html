@@ -1,0 +1,14 @@
+<div ng-init="vm.init()">
+    <ul class="paginationX">
+        <li class="page-border page-btn" ng-click="vm.prev()">&lt;</li>
+        <li ng-class="{active: item.active}" class="page-btn page-border" ng-repeat="item in vm.showList"
+            ng-click="vm.choose(item.number)">{{item.number>-1?item.number:'...'}}</li>
+        <li class="page-border page-btn" ng-click="vm.next()">&gt;</li>
+        <li style="padding-top: 0;vertical-align: top;">
+            <div>
+                前往<input class="page-border" style="height: 30px;width: 50px" type="number"
+                       ng-model="vm._page" ng-keypress="vm.enter($event)">页
+            </div>
+        </li>
+    </ul>
+</div>

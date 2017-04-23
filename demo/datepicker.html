@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>datepicker</title>
+    <link rel="stylesheet" href="../dist/statics/css/datepicker.css">
+</head>
+<body>
+<div ng-controller="datePickerCtl">
+    <div datepicker class="date-left" init-date="startTime" date-max-limit="endTime">
+        <input type="text" ng-model="startTime" >
+    </div>
+    <span class="date-addon">-</span>
+    <div datepicker class="date-right" init-date="endTime" date-min-limit="startTime">
+        <input type="text" ng-model="endTime">
+    </div>
+</div>
+
+<script src="angular.min.js"></script>
+<script src="../lib/js/angular-locale.js"></script>
+<script src="../dist/datepicker.js"></script>
+
+<script>
+    var datepicker;
+    angular.element(document).ready(function () {
+        angular.bootstrap(document.getElementsByTagName('body')[0], ['comp']);
+    });
+    datepicker = angular.module('comp', ['ngLocale', 'tjfdatepicker']);
+
+    datepicker.controller('datePickerCtl', ['$scope', '$filter', function ($scope, $filter) {
+        $scope.changeTime = function (dateString) {
+            let date = dateString ? new Date(dateString) : new Date();
+            $scope.startTime = $filter('date')(date, 'yyyy-MM-dd');
+        };
+
+        $scope.changeTime('2001-01-11');
+        $scope.startTime = '2017-05-07';
+        $scope.endTime = '2017-05-17';
+    }]);
+
+</script>
+</body>
+</html>

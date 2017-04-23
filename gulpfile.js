@@ -11,7 +11,7 @@ const gulp = require('gulp'),
     gutil = require('gutil'),
     rsync = require('gulp-rsync'),
     rawScript = [
-        {jquery: Setting.nodeModules + '/jquery/dist/jquery.min.js'},
+        // {jquery: Setting.nodeModules + '/jquery/dist/jquery.min.js'},
         {angular: Setting.nodeModules + '/angular/angular.min.js'},
     ],
     // rawScript = [
@@ -19,7 +19,7 @@ const gulp = require('gulp'),
     //     {angular: Setting.nodeModules + '/angular/angular.min.js'},
     // ],
     externals = {
-        jquery: 'window.jquery',
+        // jquery: 'window.jquery',
         angular: 'window.angular',
     };
 
@@ -52,6 +52,12 @@ gulp.task('webpack', function (done) {                   // 使用原生 webpack
         }));
         done();
     });
+});
+
+gulp.task('clean', function (done) {
+    rm('-rf', Setting.dest + '/*');
+    mkdir('dist/statics');
+    done();
 });
 
 gulp.task('copy', function (done) {
@@ -117,5 +123,5 @@ gulp.task('backup', function () {
 });
 
 gulp.task('build', gulp.series('copy', 'server', 'webpack'));        // 推荐用这个作为起始构建
-gulp.task('default', gulp.series('develop', 'server', 'webpack'));                 // 第二次构建则直接用gulp即可
+gulp.task('default', gulp.series('develop', 'webpack'));                 // 第二次构建则直接用gulp即可
 gulp.task('prod', gulp.series('production', 'copy', 'webpack'));

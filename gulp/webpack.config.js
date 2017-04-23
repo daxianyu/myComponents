@@ -80,7 +80,7 @@ function getPlugin () {
             new ScriptExtHtmlWebpackPlugin({
                 defaultAttribute: 'defer',
             }),
-            new ExtractTextPlugin('statics/css/[name]_[contenthash:6].css'),
+            new ExtractTextPlugin('statics/css/[name].css'),
             new WebpackMd5Hash(),
         ],
         pages = getEntry('./src/pages/**/index.html');
@@ -111,16 +111,30 @@ function getPlugin () {
     return _.union(defaultPlugin, []);
 }
 
+function mix(obj, obj2) {
+    for (let item in obj2) {
+        if (obj2.hasOwnProperty(item)) {
+            obj[item] = obj2[item];
+        }
+    }
+    return obj;
+}
+
 module.exports = {
     // context: __dirname,
-    entry: entries,
+    // entry: entries,
+    entry: mix({
+        'datepicker': 'src/components/datepicker/index',
+        'pagination': 'src/components/pagination/index',
+    }, entries),
     watch: true,
     cache: true,
     profile: true,
     output: {
         path: Setting.dest,
         publicPath: '/',                                // 即以path为基
-        filename: 'statics/js/[name]_[chunkhash:6].js',      // 不能'/'打头，分隔符写到path中
+        // filename: 'statics/js/[name]_[chunkhash:6].js',      // 不能'/'打头，分隔符写到path中
+        filename: '[name].js'
         // chunkFilename: 'statics/js/chunk_[name].js',
     },
     // devtool: 'eval',

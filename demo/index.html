@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>分页</title>
+    <link rel="stylesheet" href="../dist/statics/css/pagination.css">
+    <link rel="stylesheet" href="../dist/statics/css/datepicker.css">
+</head>
+<body>
+
+<div ng-controller="demoCtl">
+    <div datepicker class="date-left" init-date="startTime" date-max-limit="endTime">
+        <input type="text" ng-model="startTime" >
+    </div>
+    <span class="date-addon">-</span>
+    <div datepicker class="date-right" init-date="endTime" date-min-limit="startTime">
+        <input type="text" ng-model="endTime">
+    </div>
+    <div>---</div>
+    <div datepicker init-date="date">
+        <input type="text" ng-model="date">
+    </div>
+
+    <p style="text-align: center">第{{page}}页</p>
+    <pagination total="total" page="page" maxPageNumber="maxPageNumber" changed="onPageChange()"></pagination>
+</div>
+
+<script src="angular.min.js"></script>
+<script src="../dist/pagination.js"></script>
+<script src="../lib/js/angular-locale.js"></script>
+<script src="../dist/datepicker.js"></script>
+
+<script>
+    var component;
+    angular.element(document).ready(function () {
+        angular.bootstrap(document.getElementsByTagName('body')[0], ['comp']);
+    });
+    component = angular.module('comp', ['ngLocale', 'tjfdatepicker', 'tjfpagination']);
+
+    component.controller('demoCtl', ['$scope', '$filter', function ($scope, $filter) {
+        $scope.changeTime = function (dateString) {
+            let date = dateString ? new Date(dateString) : new Date();
+            $scope.startTime = $filter('date')(date, 'yyyy-MM-dd');
+        };
+        $scope.changeTime('2001-01-11');
+        $scope.startTime = '2017-05-07';
+        $scope.endTime = '2017-05-17';
+
+        $scope.date = '2017-03-01';
+
+        //
+        $scope.total = 190;
+        $scope.page = 1;
+        $scope.maxPageNumber = 7;
+        $scope.onPageChange = function () {
+            console.log($scope.page)
+        }
+    }]);
+</script>
+</body>
+</html>
