@@ -43,6 +43,9 @@ date-min-limit | 限制最小的日期
 
 pagination[分页]
 ---
+引入文件
+'pagination.js'
+'statics/css/pagination.css'
 ```js
 // angular 注册模块：
 angular.module('comp', ['tjfpagination'])
