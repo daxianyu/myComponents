@@ -126,6 +126,7 @@ module.exports = {
     entry: mix({
         'datepicker': 'src/components/datepicker/index',
         'pagination': 'src/components/pagination/index',
+        'delegate': 'src/components/delegate/index',
     }, entries),
     watch: true,
     cache: true,

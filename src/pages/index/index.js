@@ -5,7 +5,41 @@ require('./../../../lib/js/angular-locale');
 var component;
 angular.element(document).ready(function () {
     angular.bootstrap(document.getElementsByTagName('body')[0], ['comp']);
+
+
+    let a = Delegate('#test'),
+        b = Delegate('#test2');
+
+    function handler(event) {console.log(event);}
+
+    function handler2(event) {console.log(222);}
+
+    a.addEvent('click', 'span', handler);
+    a.addEvent('click', 'span', handler2);
+
+    a.addEvent('click', 'span', function (event) {
+        console.log(11);
+    });
+
+    a.addEvent('click', '#test', function () {
+        console.log(23423423);
+    });
+
+    a.removeEvent('click', 'span', handler);
+    a.removeEvent('click', 'span', handler2);
+
+    setTimeout(function () {
+        let x = document.querySelector('#test');
+        x.click();
+        // b.handler.call(x, {
+        //     type: 'click',
+        //     target: x,
+        //     currentTarget: document.querySelector('#test2'),
+        // });
+    });
+
 });
+
 component = angular.module('comp', ['ngLocale', 'tjfdatepicker', 'tjfpagination']);
 
 component.controller('demoCtl', ['$scope', '$filter', function ($scope, $filter) {
@@ -27,3 +61,5 @@ component.controller('demoCtl', ['$scope', '$filter', function ($scope, $filter)
         console.log($scope.page);
     };
 }]);
+
+

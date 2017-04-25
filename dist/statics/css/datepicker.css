@@ -1,1 +1,109 @@
-*,:after,:before{box-sizing:border-box}.calender-body .calender-date.active,.calender-body .calender-date:hover,.calender-body .calender-month.active,.calender-body .calender-month:hover,.calender-body .calender-year.active,.calender-body .calender-year:hover{background-color:hsla(0,0%,61%,.5)}.date-addon{text-align:center;float:left;width:30px}.datepicker,[datepicker],datepicker{float:left;position:relative;font-family:Helvetica Neue,Arial,sans-serif;width:calc(50% - 15px)}.datepicker input,[datepicker] input,datepicker input{width:100%}.datepicker .disabled,[datepicker] .disabled,datepicker .disabled{background-color:hsla(0,0%,100%,.6);color:hsla(0,0%,61%,.5);pointer-events:none}.calender{margin:auto;width:101%;position:absolute;z-index:99;display:none;min-width:250px;max-width:400px;border:1px solid #dedbdb;border-radius:3px;background-color:#fff}.calender .datepicker.open,.calender datepicker.open,[datepicker].open .calender{display:block}.calender-header{line-height:40px;text-align:center;position:relative;background-color:#bbbdc3;float:left;width:100%;font-size:11.5px}.calender-header .disabled{background-color:hsla(0,0%,100%,.2)}.calender-header-left{display:inline-block;width:20%;float:left;cursor:pointer}.calender-header-left:hover{background-color:hsla(0,0%,100%,.2)}.calender-header-middle{display:inline-block;width:60%;float:left;cursor:pointer}.calender-header-middle:hover{background-color:hsla(0,0%,100%,.2)}.calender-header-right{display:inline-block;width:20%;float:left;cursor:pointer}.calender-header-right:hover{background-color:hsla(0,0%,100%,.2)}.calender-header:after{content:"";display:block;clear:both}.calender-day-header{float:left;width:100%;background-color:#fff;text-align:center}.calender-day-header .day{width:14.28571%;float:left;font-size:11.5px;padding:10px 0;line-height:normal}.calender-body{float:left;width:100%;position:relative;text-align:center}.calender-body>*{float:left}.calender-body .calender-date{margin:5px 1%;padding:4px 6px;width:12.28571%;line-height:1.42856;font-size:11.5px;cursor:pointer}.calender-body .calender-date.preNextMonth{background-color:hsla(0,0%,100%,.6);color:hsla(0,0%,61%,.5);pointer-events:none}.calender-body .calender-month,.calender-body .calender-year{margin:5px 1%;padding:6px 10px;width:23%;line-height:1.42856;cursor:pointer;font-size:11.5px}
+*, *:after, *:before {
+  box-sizing: border-box; }
+
+.calender-body .calender-date:hover, .calender-body .calender-month:hover, .calender-body .calender-year:hover {
+  background-color: rgba(155, 155, 155, 0.5); }
+
+.calender-body .calender-date.active, .calender-body .calender-month.active, .calender-body .calender-year.active {
+  background-color: rgba(155, 155, 155, 0.5); }
+
+.date-addon {
+  text-align: center;
+  float: left;
+  width: 30px; }
+
+datepicker, .datepicker, [datepicker] {
+  float: left;
+  position: relative;
+  font-family: Helvetica Neue, Arial, sans-serif;
+  width: calc(50% - 15px); }
+  datepicker input, .datepicker input, [datepicker] input {
+    width: 100%; }
+  datepicker .disabled, .datepicker .disabled, [datepicker] .disabled {
+    background-color: rgba(255, 255, 255, 0.6);
+    color: rgba(155, 155, 155, 0.5);
+    pointer-events: none; }
+  .calender {
+    margin: auto;
+    width: 101%;
+    position: absolute;
+    z-index: 99;
+    display: none;
+    min-width: 250px;
+    max-width: 400px;
+    border: 1px solid #dedbdb;
+    border-radius: 3px;
+    background-color: #fff; }
+    .calender datepicker.open, .calender .datepicker.open, [datepicker].open .calender {
+      display: block; }
+    .calender-header {
+      line-height: 40px;
+      text-align: center;
+      position: relative;
+      background-color: #bbbdc3;
+      float: left;
+      width: 100%;
+      font-size: 11.5px; }
+      .calender-header .disabled {
+        background-color: rgba(255, 255, 255, 0.2); }
+      .calender-header-left {
+        display: inline-block;
+        width: 20%;
+        float: left;
+        cursor: pointer; }
+        .calender-header-left:hover {
+          background-color: rgba(255, 255, 255, 0.2); }
+      .calender-header-middle {
+        display: inline-block;
+        width: 60%;
+        float: left;
+        cursor: pointer; }
+        .calender-header-middle:hover {
+          background-color: rgba(255, 255, 255, 0.2); }
+      .calender-header-right {
+        display: inline-block;
+        width: 20%;
+        float: left;
+        cursor: pointer; }
+        .calender-header-right:hover {
+          background-color: rgba(255, 255, 255, 0.2); }
+      .calender-header:after {
+        content: '';
+        display: block;
+        clear: both; }
+    .calender-day-header {
+      float: left;
+      width: 100%;
+      background-color: white;
+      text-align: center; }
+      .calender-day-header .day {
+        width: 14.28571%;
+        float: left;
+        font-size: 11.5px;
+        padding: 10px 0;
+        line-height: normal; }
+    .calender-body {
+      float: left;
+      width: 100%;
+      position: relative;
+      text-align: center; }
+      .calender-body > * {
+        float: left; }
+      .calender-body .calender-date {
+        margin: 5px 1%;
+        padding: 4px 6px;
+        width: 12.28571%;
+        line-height: 1.42856;
+        font-size: 11.5px;
+        cursor: pointer; }
+        .calender-body .calender-date.preNextMonth {
+          background-color: rgba(255, 255, 255, 0.6);
+          color: rgba(155, 155, 155, 0.5);
+          pointer-events: none; }
+      .calender-body .calender-month, .calender-body .calender-year {
+        margin: 5px 1%;
+        padding: 6px 10px;
+        width: 23%;
+        line-height: 1.42856;
+        cursor: pointer;
+        font-size: 11.5px; }

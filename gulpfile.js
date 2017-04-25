@@ -123,5 +123,5 @@ gulp.task('backup', function () {
 });
 
 gulp.task('build', gulp.series('copy', 'server', 'webpack'));        // 推荐用这个作为起始构建
-gulp.task('default', gulp.series('develop', 'webpack'));                 // 第二次构建则直接用gulp即可
+gulp.task('default', gulp.series('develop', 'server', 'webpack'));                 // 第二次构建则直接用gulp即可
 gulp.task('prod', gulp.series('production', 'copy', 'webpack'));
