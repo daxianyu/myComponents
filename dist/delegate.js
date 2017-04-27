@@ -54,12 +54,6 @@
 	* 3. any type of event have its own handler
 	* */
 
-	/*
-	* 1. multi listener
-	* */
-
-	var data = window.dataxxx = {};
-
 	function Delegate(el) {
 	    if (typeof el === 'string') {
 	        el = document.querySelector(el);
@@ -86,6 +80,7 @@
 	    },
 	    addEvent: function addEvent(eventType, el, callback, isBubble) {
 	        var event = this.elemData.events[eventType];
+	        isBubble = isBubble || false;
 	        if (!event) {
 	            this.root.addEventListener(eventType, this.handler);
 	            event = this.elemData.events[eventType] = [];
@@ -103,28 +98,35 @@
 	    getHandlers: function getHandlers(event) {
 	        var type = event.type,
 	            current = event.target,
+	            currentNode = void 0,
 	            root = event.currentTarget,
 	            matches = [],
 	            eventSaved = root.delegateInstance.elemData.events[type],
 	            delegateCount = void 0;
 	        if (eventSaved) {
 	            delegateCount = eventSaved.delegateCount;
-	            for (; current !== root; current = current.parentNode) {
-	                var _loop = function _loop(i) {
+
+	            for (var i = 0; i < delegateCount; i++) {
+	                var _loop = function _loop() {
 	                    var handler = eventSaved[i],
 	                        elem = root.querySelectorAll(handler.selector);
 	                    elem.forEach(function (ele) {
-	                        if (current === ele) {
+	                        if (currentNode === ele) {
 	                            matches.push({
-	                                elem: current,
+	                                elem: currentNode,
 	                                handler: handler.handler
 	                            });
 	                        }
 	                    });
+	                    if (handler.isBubble) {
+	                        return 'break';
+	                    }
 	                };
 
-	                for (var i = 0; i < delegateCount; i++) {
-	                    _loop(i);
+	                for (currentNode = current; currentNode !== root; currentNode = currentNode.parentNode) {
+	                    var _ret = _loop();
+
+	                    if (_ret === 'break') break;
 	                }
 	            }
 	        }
@@ -133,7 +135,7 @@
 	    handler: function handler(event) {
 	        var _arguments = arguments;
 
-	        var matches = Delegate.fn.getHandlers.apply(this, arguments);
+	        var matches = Delegate.fn.getHandlers.apply(null, arguments);
 	        matches.forEach(function (match) {
 	            var handler = match.handler,
 	                elements = match.elem;
@@ -172,55 +174,6 @@
 
 	window.Delegate = Delegate;
 	module.exports = Delegate;
-
-	function maxSum(arr) {
-	    var max = 0,
-	        sum = 0,
-	        index = 0;
-	    for (var i = 0; i < arr.length; i++) {
-	        sum += arr[i];
-	        if (sum < 0) {
-	            sum = 0;
-	        }
-	        if (sum > max) {
-	            index = i;
-	            max = sum;
-	        }
-	    }
-	    // console.log(max, index);
-	    return max;
-	}
-
-	var a = [-1, 4, -2, 3, -2, 3];
-
-	function max(a) {
-	    var sum = 0,
-	        max = 0;
-	    for (var i = 0; i < a.length; i++) {
-	        var first = a.slice(0, i),
-	            second = a.slice(i + 1, a.length);
-	        sum = maxSum(first) + maxSum(second);
-	        if (sum > max) {
-	            max = sum;
-	        }
-	    }
-	    return max;
-	}
-
-	function multiMax(arr, k) {
-	    var temp = new Array(arr.length + 1);
-	    for (var i = 0; i < temp.length; i++) {
-	        var tt = new Array(arr.length);
-	        temp[i] = tt;
-	        // for (let j = 0;j < tt.length;j++) {
-	        //     tt[j] = 0;
-	        // }
-	    }
-	    temp[0][0] = 0;
-	    // for (let i = 0;i < temp.length;i++) {}
-	}
-
-	// console.log(max(a));
 
 /***/ }
 /******/ ]);

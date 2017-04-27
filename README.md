@@ -90,10 +90,13 @@ delegate[事件代理]
 let delegate = Delegate('#test');
 
 // 对子元素添加事件
+
+// 事件类型， 元素选择器， 事件处理函数， 是否冒泡
+
 delegate.addEvent('click', 'span', function(event) {
     // this : 当前的命中元素
     console.log(this.innerHtml);
-})
+}, false)
 
 // 移除事件
 // 1. 移除某个事件函数：

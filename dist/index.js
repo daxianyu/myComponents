@@ -141,7 +141,7 @@
 
 	    a.addEvent('click', 'span', function (event) {
 	        console.log(11);
-	    });
+	    }, true);
 
 	    a.addEvent('click', '#test', function () {
 	        console.log(23423423);
@@ -150,15 +150,14 @@
 	    a.removeEvent('click', 'span', handler);
 	    a.removeEvent('click', 'span', handler2);
 
-	    setTimeout(function () {
-	        var x = document.querySelector('#test');
-	        x.click();
-	        // b.handler.call(x, {
-	        //     type: 'click',
-	        //     target: x,
-	        //     currentTarget: document.querySelector('#test2'),
-	        // });
-	    });
+	    // setTimeout(function () {
+	    //     let x = document.querySelector('#test');
+	    // b.handler.call(x, {
+	    //     type: 'click',
+	    //     target: x,
+	    //     currentTarget: document.querySelector('#test2'),
+	    // });
+	    // });
 	});
 
 	component = angular.module('comp', ['ngLocale', 'tjfdatepicker', 'tjfpagination']);

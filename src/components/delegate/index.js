@@ -6,14 +6,6 @@
 * 3. any type of event have its own handler
 * */
 
-/*
-* 1. multi listener
-* */
-
-let data = window.dataxxx = {
-
-};
-
 function Delegate(el) {
     if (typeof el === 'string') {
         el = document.querySelector(el);
@@ -40,6 +32,7 @@ Delegate.fn = Delegate.prototype = {
     },
     addEvent(eventType, el, callback, isBubble) {
         let event = this.elemData.events[eventType];
+        isBubble = isBubble || false;
         if (!event) {
             this.root.addEventListener(eventType, this.handler);
             event = this.elemData.events[eventType] = [];
@@ -56,32 +49,36 @@ Delegate.fn = Delegate.prototype = {
     },
     getHandlers(event) {
         let type = event.type,
-            current = event.target,
+            current = event.target, currentNode,
             root = event.currentTarget,
             matches = [],
             eventSaved = root.delegateInstance.elemData.events[type],
             delegateCount;
         if (eventSaved) {
             delegateCount = eventSaved.delegateCount;
-            for (; current !== root; current = current.parentNode) {
-                for (let i = 0;i < delegateCount; i++) {
+
+            for (let i = 0;i < delegateCount; i++) {
+                for (currentNode = current; currentNode !== root;currentNode = currentNode.parentNode) {
                     let handler = eventSaved[i],
                         elem = root.querySelectorAll(handler.selector);
                     elem.forEach((ele) => {
-                        if (current === ele) {
+                        if (currentNode === ele) {
                             matches.push({
-                                elem: current,
+                                elem: currentNode,
                                 handler: handler.handler,
                             });
                         }
                     });
+                    if (handler.isBubble) {
+                        break;
+                    }
                 }
             }
         }
         return matches;
     },
     handler (event) {
-        let matches = Delegate.fn.getHandlers.apply(this, arguments);
+        let matches = Delegate.fn.getHandlers.apply(null, arguments);
         matches.forEach((match) => {
             let handler = match.handler,
                 elements = match.elem;
